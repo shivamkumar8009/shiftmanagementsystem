@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shift Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #ffffff;
+        color: #003366;
+        padding: 40px;
+      }
+
+      .container {
+        background: white;
+        padding: 40px;
+        text-align: center;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border: 3px solid #d32f2f;
+        max-width: 90%;
+        width: 420px;
+        margin: auto;
+      }
+
+      h1 {
+        margin-bottom: 25px;
+        color: #d32f2f;
+        font-size: 28px;
+        font-weight: 600;
+      }
+
+      label {
+        font-weight: 400;
+        display: block;
+        margin-top: 15px;
+      }
+
+      input,
+      select {
+        margin: 12px 0;
+        padding: 12px;
+        font-size: 16px;
+        width: 100%;
+        border: 1px solid #003366;
+        border-radius: 5px;
+        display: block;
+        font-family: "Poppins", sans-serif;
+        box-sizing: border-box;
+      }
+
+      select {
+        height: 55px;
+      }
+
+      button {
+        padding: 14px 22px;
+        font-size: 16px;
+        background: #003366;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-top: 20px;
+        border-radius: 5px;
+        width: 100%;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #002244;
+      }
+
+      #result {
+        margin-top: 25px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #d32f2f;
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 20px;
+        }
+        .container {
+          width: 100%;
+          padding: 25px;
+        }
+        button {
+          font-size: 14px;
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Shift Management System</h1>
+
+      <label for="startDate">Shift Start Date:</label>
+      <input type="date" id="startDate" />
+
+      <label for="shiftType">Select Shift:</label>
+      <select id="shiftType">
+        <option value="day">07:00 - 15:00 (Day Shift)</option>
+        <option value="afternoon">15:00 - 23:00 (Afternoon Shift)</option>
+        <option value="night">23:00 - 07:00 (Night Shift)</option>
+      </select>
+
+      <label for="checkDate">Select Date to Check Schedule:</label>
+      <input type="date" id="checkDate" />
+
+      <button onclick="checkSchedule()">Check Schedule</button>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      function checkSchedule() {
+        const startDateInput = document.getElementById("startDate").value;
+        const shiftType = document.getElementById("shiftType").value;
+        const checkDateInput = document.getElementById("checkDate").value;
+        const resultDiv = document.getElementById("result");
+
+        if (!startDateInput || !checkDateInput) {
+          alert("Please select all inputs.");
+          return;
+        }
+
+        const startDate = new Date(startDateInput);
+        const checkDate = new Date(checkDateInput);
+
+        const diffDays = Math.floor(
+          (checkDate - startDate) / (1000 * 60 * 60 * 24)
+        );
+        const cycleDay = ((diffDays % 21) + 21) % 21;
+
+        const baseSchedule = [
+          "day",
+          "day",
+          "day",
+          "day",
+          "rest",
+          "night",
+          "night",
+          "night",
+          "night",
+          "night",
+          "night",
+          "night",
+          "rest",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "rest",
+        ];
+
+        let startIndex;
+        if (shiftType === "day") {
+          startIndex = 0;
+        } else if (shiftType === "afternoon") {
+          startIndex = 13;
+        } else if (shiftType === "night") {
+          startIndex = 5;
+        }
+
+        const adjustedSchedule = [
+          ...baseSchedule.slice(startIndex),
+          ...baseSchedule.slice(0, startIndex),
+        ];
+        let shift = adjustedSchedule[cycleDay];
+
+        const shiftTimes = {
+          day: "07:00 - 15:00",
+          afternoon: "15:00 - 23:00",
+          night: "23:00 - 07:00",
+          rest: "REST",
+        };
+
+        resultDiv.innerHTML = `On ${checkDate.toDateString()}, your shift is: <strong>${
+          shiftTimes[shift]
+        }</strong>`;
+      }
+    </script>
+  </body>
+</html>
