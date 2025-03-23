@@ -336,9 +336,9 @@
       <input type="date" id="startDate" />
       <label for="shiftType">Select Shift:</label>
       <select id="shiftType">
-        <option value="day">07:00 - 15:00 (Day Shift)</option>
-        <option value="afternoon">15:00 - 23:00 (Afternoon Shift)</option>
-        <option value="night">23:00 - 07:00 (Night Shift)</option>
+        <option value="day">(Day Shift)</option>
+        <option value="afternoon">(Afternoon Shift)</option>
+        <option value="night">(Night Shift)</option>
       </select>
       <label for="outputMonth">Select Month to View Schedule:</label>
       <input type="month" id="outputMonth" />
@@ -418,7 +418,7 @@
           dayDiv.classList.add("day", shiftClass);
           dayDiv.innerHTML = `<div>${day}</div><div style="font-size: 10px;">${
             shift.charAt(0).toUpperCase() + shift.slice(1)
-          } Shift</div>`;
+          } </div>`;
           calendarDiv.appendChild(dayDiv);
         }
       }
