@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -192,6 +192,235 @@
         resultDiv.innerHTML = `On ${checkDate.toDateString()}, your shift is: <strong>${
           shiftTimes[shift]
         }</strong>`;
+      }
+    </script>
+  </body>
+</html>
+ -->
+ <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shift Management Calendar</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f9f9f9;
+        color: #003366;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .container {
+        background: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 3px solid #d32f2f;
+        max-width: 90%;
+        width: 500px;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        margin-bottom: 15px;
+        color: #d32f2f;
+      }
+
+      label {
+        font-weight: 400;
+        display: block;
+        margin-top: 10px;
+      }
+
+      input,
+      select {
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+        width: 100%;
+        border: 1px solid #003366;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 12px;
+        font-size: 16px;
+        background: #003366;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        width: 100%;
+        font-weight: 600;
+        margin-top: 15px;
+      }
+
+      button:hover {
+        background: #002244;
+      }
+
+      .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 3px;
+        max-width: 500px;
+        margin-top: 20px;
+        padding: 10px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .day {
+        width: 100%;
+        min-height: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+        padding: 5px;
+        border: 1px solid #ccc;
+        font-size: 12px;
+      }
+
+      .day-shift {
+        background-color: #e3f2fd;
+      }
+      .afternoon-shift {
+        background-color: #fff3cd;
+      }
+      .night-shift {
+        background-color: #616161;
+        color: white;
+      }
+      .rest-day {
+        background-color: #d32f2f;
+        color: white;
+      }
+
+      @media (max-width: 600px) {
+        .calendar {
+          grid-template-columns: repeat(7, 1fr);
+          gap: 2px;
+          padding: 5px;
+        }
+
+        .day {
+          min-height: 40px;
+          font-size: 10px;
+          padding: 3px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Shift Management Calendar</h1>
+      <label for="startDate">Shift Start Date:</label>
+      <input type="date" id="startDate" />
+      <label for="shiftType">Select Shift:</label>
+      <select id="shiftType">
+        <option value="day">07:00 - 15:00 (Day Shift)</option>
+        <option value="afternoon">15:00 - 23:00 (Afternoon Shift)</option>
+        <option value="night">23:00 - 07:00 (Night Shift)</option>
+      </select>
+      <label for="outputMonth">Select Month to View Schedule:</label>
+      <input type="month" id="outputMonth" />
+      <button onclick="generateCalendar()">Generate Calendar</button>
+    </div>
+    <div class="calendar" id="calendar"></div>
+
+    <script>
+      function generateCalendar() {
+        const startDateInput = document.getElementById("startDate").value;
+        const shiftType = document.getElementById("shiftType").value;
+        const outputMonthInput = document.getElementById("outputMonth").value;
+        const calendarDiv = document.getElementById("calendar");
+        calendarDiv.innerHTML = "";
+
+        if (!startDateInput || !outputMonthInput) {
+          alert(
+            "Please select both the shift start date and the month to view schedule."
+          );
+          return;
+        }
+
+        const startDate = new Date(startDateInput);
+        startDate.setDate(startDate.getDate() - 1);
+        const [outputYear, outputMonth] = outputMonthInput
+          .split("-")
+          .map(Number);
+        const daysInMonth = new Date(outputYear, outputMonth, 0).getDate();
+
+        const baseSchedule = [
+          "day",
+          "day",
+          "day",
+          "day",
+          "rest",
+          "night",
+          "night",
+          "night",
+          "night",
+          "night",
+          "night",
+          "night",
+          "rest",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "afternoon",
+          "rest",
+        ];
+
+        let startIndex =
+          shiftType === "day" ? 0 : shiftType === "afternoon" ? 13 : 5;
+        const adjustedSchedule = [
+          ...baseSchedule.slice(startIndex),
+          ...baseSchedule.slice(0, startIndex),
+        ];
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const currentDate = new Date(outputYear, outputMonth - 1, day);
+          const diffDays = Math.floor(
+            (currentDate - startDate) / (1000 * 60 * 60 * 24)
+          );
+          const cycleDay = ((diffDays % 21) + 21) % 21;
+          let shift = adjustedSchedule[cycleDay];
+          const shiftClass =
+            shift === "day"
+              ? "day-shift"
+              : shift === "afternoon"
+              ? "afternoon-shift"
+              : shift === "night"
+              ? "night-shift"
+              : "rest-day";
+          const dayDiv = document.createElement("div");
+          dayDiv.classList.add("day", shiftClass);
+          dayDiv.innerHTML = `<div>${day}</div><div style="font-size: 10px;">${
+            shift.charAt(0).toUpperCase() + shift.slice(1)
+          } Shift</div>`;
+          calendarDiv.appendChild(dayDiv);
+        }
       }
     </script>
   </body>
